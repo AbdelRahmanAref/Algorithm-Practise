@@ -12,19 +12,19 @@ public func example(of description: String, action: () -> ()) {
 /// onto the stack. Once the list has been fully traversed than we can print the
 /// values as we pop values off the stack
 
-//public func printInReverse<T>(_ list: LinkedList<T>) {
-//    var current = list.head
-//    var stack = Stack<T>()
-//
-//    while let node = current {
-//        stack.push(node.value)
-//        current = current.next
-//    }
-//
-//    while let value = stack.pop() {
-//        print(value)
-//    }
-//}
+public func printInReverse<T>(_ list: LinkedList<T>) {
+    var current = list.head
+    var stack = Stack<T>()
+
+    while let node = current {
+        stack.push(node.value)
+        current = current.next
+    }
+
+    while let value = stack.pop() {
+        print(value)
+    }
+}
 
 // Challenge 2: Given a string, check if the parenthesis are correctly balanced
 
@@ -40,7 +40,6 @@ public func checkBalancedParenthesis(_ string: String) -> Bool {
     for char in string {
         if char == "(" {
             stack.push(char)
-            print(stack)
         } else if char == ")" {
             if stack.isEmpty {
                 return false
