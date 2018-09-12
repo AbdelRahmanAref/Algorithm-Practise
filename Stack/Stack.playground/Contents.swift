@@ -17,10 +17,12 @@ example(of: "using a stack") {
 }
 
 example(of: "initializing a stack from an array") {
-    let array = ["A", "B", "C", "D"]
+    let array = ["H", "e", "l", "l", "o"]
     var stack = Stack(array)
     print(stack)
     stack.pop()
+    
+    checkBalancedParenthesis("(Hello))")
 }
 
 example(of: "initializing a stack from an array literal") {
@@ -28,3 +30,19 @@ example(of: "initializing a stack from an array literal") {
     print(stack)
     stack.pop()
 }
+
+example(of: "balanced parenthesis") {
+    let testString = "(Hello)"
+    checkBalancedParenthesis(testString)
+    
+    let testString2 = "(Hello"
+    checkBalancedParenthesis(testString2)
+    
+    let testString3 = "Hello"
+    checkBalancedParenthesis(testString3)
+    
+    let testString4 = "func (tuple: (world, foobar))"
+    checkBalancedParenthesis(testString4)
+}
+
+
