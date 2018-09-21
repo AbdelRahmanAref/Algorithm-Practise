@@ -97,13 +97,8 @@ extension BinarySearchTree: Equatable {
         var leftTreeArray: [Element] = []
         var rightTreeArray: [Element] = []
         
-        lhs.root?.traversePreOrder {
-            leftTreeArray.append($0)
-        }
-        
-        rhs.root?.traversePreOrder {
-            rightTreeArray.append($0)
-        }
+        lhs.root?.traversePreOrder { leftTreeArray.append($0) }
+        rhs.root?.traversePreOrder { rightTreeArray.append($0) }
         
         return leftTreeArray == rightTreeArray
     }
