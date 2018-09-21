@@ -7,3 +7,11 @@ public func example(of description: String, action: () -> Void) {
     print()
 }
 
+public func heightOf<T>(_ node: BinaryNode<T>?) -> Int {
+    guard let node = node else {
+        return -1
+    }
+    
+    return 1 + max(heightOf(node.leftChild), heightOf(node.rightChild))
+}
+

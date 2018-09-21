@@ -19,10 +19,20 @@ extension BinaryNode {
         rightChild?.traverseInOrder(visit: visit)
     }
     
-    public func traversePreOrder(visit: (T) -> Void) {
+    public func traversePreOrder(visit: (T?) -> Void) {
         visit(value)
-        leftChild?.traversePreOrder(visit: visit)
-        rightChild?.traversePreOrder(visit: visit)
+        
+        if let leftChild = leftChild {
+            leftChild.traverseInOrder(visit: visit)
+        } else {
+            visit(nil)
+        }
+        
+        if let rightChild = rightChild {
+            rightChild.traversePreOrder(visit: visit)
+        } else {
+            visit(nil)
+        }
     }
     
     public func traversePostOrder(visit: (T) -> Void) {
