@@ -1,9 +1,16 @@
-import Foundation
+// Copyright (c) 2018 Razeware LLC
+// For full license & permission details, see LICENSE.markdown.
 
 public struct Heap<Element: Equatable> {
     
     var elements: [Element] = []
     let sort: (Element, Element) -> Bool
+    
+    public init(sort: @escaping (Element, Element) -> Bool, elements: [Element] = []) {
+        self.sort = sort
+        self.elements = elements
+        buildHeap()
+    }
     
     public var isEmpty: Bool {
         return elements.isEmpty
@@ -13,19 +20,17 @@ public struct Heap<Element: Equatable> {
         return elements.count
     }
     
-    public init(sort: @escaping (Element, Element) -> Bool, elements: [Element] = []) {
-        self.sort = sort
-        self.elements = elements
-        
+    public func peek() -> Element? {
+        return elements.first
+    }
+    
+    mutating public func buildHeap() {
         if !elements.isEmpty {
+            // siftDown the original heap values
             for i in stride(from: elements.count / 2 - 1, through: 0, by: -1) {
                 siftDown(from: i)
             }
         }
-    }
-    
-    func peek() -> Element? {
-        return elements.first
     }
     
     func leftChildIndex(ofParentAt index: Int) -> Int {
@@ -36,39 +41,14 @@ public struct Heap<Element: Equatable> {
         return (2 * index) + 2
     }
     
-    func parentIndex(ofChildAt index: Int) -> Int {
+    public func parentIndex(ofChildAt index: Int) -> Int {
         return (index - 1) / 2
-    }
-    
-    func index(of element: Element, startingAt i: Int) -> Int? {
-        if i >= count {
-            return nil
-        }
-        
-        if sort(element, elements[i]) {
-            return nil
-        }
-        
-        if element == elements[i] {
-            return i
-        }
-        
-        if let j = index(of: element, startingAt: leftChildIndex(ofParentAt: i)) {
-            return j
-        }
-        
-        if let j = index(of: element, startingAt: rightChildIndex(ofParentAt: i)) {
-            return j
-        }
-        
-        return nil
     }
     
     public mutating func remove() -> Element? {
         guard !isEmpty else {
             return nil
         }
-        
         elements.swapAt(0, count - 1)
         defer {
             siftDown(from: 0)
@@ -76,36 +56,11 @@ public struct Heap<Element: Equatable> {
         return elements.removeLast()
     }
     
-    public mutating func remove(at index: Int) -> Element? {
-        guard index < count - 1 else {
-            return nil
-        }
-        
-        if index == count - 1 {
-            return elements.removeLast()
-        } else {
-            elements.swapAt(index, count - 1)
-            defer {
-                siftDown(from: index)
-                siftUp(from: index)
-            }
-            return elements.removeLast()
-        }
-    }
-    
-    public mutating func insert(_ element: Element) {
-        elements.append(element)
-        siftUp(from: elements.count - 1)
-    }
-    
     mutating func siftDown(from index: Int) {
-        // store parent
         var parent = index
-        
         while true {
             let left = leftChildIndex(ofParentAt: parent)
             let right = rightChildIndex(ofParentAt: parent)
-            
             var candidate = parent
             if left < count && sort(elements[left], elements[candidate]) {
                 candidate = left
@@ -121,6 +76,11 @@ public struct Heap<Element: Equatable> {
         }
     }
     
+    public mutating func insert(_ element: Element) {
+        elements.append(element)
+        siftUp(from: elements.count - 1)
+    }
+    
     mutating func siftUp(from index: Int) {
         var child = index
         var parent = parentIndex(ofChildAt: child)
@@ -129,5 +89,47 @@ public struct Heap<Element: Equatable> {
             child = parent
             parent = parentIndex(ofChildAt: child)
         }
+    }
+    
+    public mutating func remove(at index: Int) -> Element? {
+        guard index < elements.count else {
+            return nil
+        }
+        if index == elements.count - 1 {
+            return elements.removeLast()
+        } else {
+            elements.swapAt(index, elements.count - 1)
+            defer {
+                siftDown(from: index)
+                siftUp(from: index)
+            }
+            return elements.removeLast()
+        }
+    }
+    
+    func index(of element: Element, startingAt i: Int) -> Int? {
+        if i >= count {
+            return nil
+        }
+        if sort(element, elements[i]) {
+            return nil
+        }
+        if element == elements[i] {
+            return i
+        }
+        if let j = index(of: element, startingAt: leftChildIndex(ofParentAt: i)) {
+            return j
+        }
+        if let j = index(of: element, startingAt: rightChildIndex(ofParentAt: i)) {
+            return j
+        }
+        return nil
+    }
+    
+    mutating public func merge(_ heap: Heap) {
+        // append the elements of the other heap to the current heap
+        elements = elements + heap.elements
+        // perform siftDowns to conform to heap property
+        buildHeap()
     }
 }
